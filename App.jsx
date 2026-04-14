@@ -10,13 +10,6 @@ import {
   Textarea,
   Select,
   SelectItem,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
   Divider,
   Link,
 } from "@heroui/react";
@@ -102,64 +95,62 @@ export default function App() {
       />
 
       {/* ─────────────── NAVBAR ─────────────── */}
-      <Navbar
-        isMenuOpen={isMenuOpen}
-        onMenuOpenChange={setIsMenuOpen}
-        className="bg-[#07090d]/80 backdrop-blur-xl border-b border-white/[0.06] fixed"
-        maxWidth="xl"
-      >
-        <NavbarContent justify="start">
-          <NavbarMenuToggle className="sm:hidden text-white" aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
-          <NavbarBrand>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0072f5] to-[#00c8ff] flex items-center justify-center text-sm">🛡</div>
-              <span className="font-['Syne',sans-serif] font-extrabold text-xl text-white">DocGuard</span>
-            </div>
-          </NavbarBrand>
-        </NavbarContent>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#07090d]/80 backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+          {/* Brand */}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0072f5] to-[#00c8ff] flex items-center justify-center text-sm">🛡</div>
+            <span className="font-['Syne',sans-serif] font-extrabold text-xl text-white">DocGuard</span>
+          </div>
 
-        <NavbarContent className="hidden sm:flex gap-6" justify="center">
-          {navLinks.map((label, i) => (
-            <NavbarItem key={i}>
-              <Link href={navHrefs[i]} className="text-[#6b7a8d] hover:text-white text-sm font-medium transition-colors">{label}</Link>
-            </NavbarItem>
-          ))}
-        </NavbarContent>
+          {/* Desktop links */}
+          <div className="hidden sm:flex items-center gap-6">
+            {navLinks.map((label, i) => (
+              <a key={i} href={navHrefs[i]} className="text-[#6b7a8d] hover:text-white text-sm font-medium transition-colors">{label}</a>
+            ))}
+          </div>
 
-        <NavbarContent justify="end" className="gap-2">
-          <NavbarItem>
-            <Button
-              as="a"
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <a
               href="https://wa.me/9607770535"
               target="_blank"
-              variant="bordered"
-              size="sm"
-              className="border-white/10 text-white hidden sm:flex"
-              startContent={<span>💬</span>}
+              rel="noreferrer"
+              className="hidden sm:flex items-center gap-1.5 border border-white/10 text-white text-sm font-medium px-3 py-1.5 rounded-xl hover:border-white/30 transition-colors"
             >
-              WhatsApp
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              as="a"
+              <span>💬</span> WhatsApp
+            </a>
+            <a
               href="#contact"
-              size="sm"
-              className="bg-gradient-to-r from-[#0072f5] to-[#00c8ff] text-white font-semibold shadow-lg shadow-blue-500/20"
+              className="bg-gradient-to-r from-[#0072f5] to-[#00c8ff] text-white text-sm font-semibold px-4 py-1.5 rounded-xl shadow-lg shadow-blue-500/20"
             >
               Request Demo
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
+            </a>
+            {/* Mobile hamburger */}
+            <button
+              className="sm:hidden text-white p-1"
+              onClick={() => setIsMenuOpen((o) => !o)}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
+        </div>
 
-        <NavbarMenu className="bg-[#07090d]/95 pt-6 gap-3">
-          {navLinks.map((label, i) => (
-            <NavbarMenuItem key={i}>
-              <Link href={navHrefs[i]} className="text-[#a0aec0] text-lg w-full" onPress={() => setIsMenuOpen(false)}>{label}</Link>
-            </NavbarMenuItem>
-          ))}
-        </NavbarMenu>
-      </Navbar>
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <div className="sm:hidden bg-[#07090d]/95 border-t border-white/[0.06] px-4 py-4 flex flex-col gap-3">
+            {navLinks.map((label, i) => (
+              <a
+                key={i}
+                href={navHrefs[i]}
+                className="text-[#a0aec0] text-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >{label}</a>
+            ))}
+          </div>
+        )}
+      </nav>
 
       {/* ─────────────── HERO ─────────────── */}
       <section id="hero" className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center pt-32 pb-20 px-4">
