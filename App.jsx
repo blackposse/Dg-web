@@ -1,18 +1,72 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
-  Chip,
-  Input,
-  Textarea,
-  Select,
-  SelectItem,
-  Divider,
-  Link,
-} from "@heroui/react";
+import { useState, useEffect, useRef, Children } from "react";
+
+// ─────────────────────────────────────────────
+// UI PRIMITIVES (Tailwind replacements)
+// ─────────────────────────────────────────────
+const Button = ({ as, href, target, rel, variant, size, className = "", startContent, fullWidth, type = "button", children, ...rest }) => {
+  const Tag = as || (href ? "a" : "button");
+  return (
+    <Tag type={Tag === "button" ? type : undefined} href={href} target={target} rel={rel}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all cursor-pointer select-none ${fullWidth ? "w-full" : ""} ${className}`}
+      {...rest}>{startContent}{children}</Tag>
+  );
+};
+
+const Card = ({ className = "", children }) => (
+  <div className={`rounded-2xl overflow-hidden ${className}`}>{children}</div>
+);
+const CardBody = ({ className = "", children }) => <div className={`p-5 ${className}`}>{children}</div>;
+const CardHeader = ({ className = "", children }) => <div className={`px-5 pt-5 ${className}`}>{children}</div>;
+const CardFooter = ({ className = "", children }) => <div className={`px-5 pb-5 pt-0 ${className}`}>{children}</div>;
+
+const chipColors = { primary: "bg-blue-500/15 text-blue-400 border-blue-500/20", secondary: "bg-purple-500/15 text-purple-400 border-purple-500/20", success: "bg-green-500/15 text-green-400 border-green-500/20", warning: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20", danger: "bg-red-500/15 text-red-400 border-red-500/20" };
+const Chip = ({ className = "", color, size, variant, startContent, children }) => (
+  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-semibold ${chipColors[color] || "bg-white/5 text-white border-white/10"} ${className}`}>
+    {startContent}{children}
+  </span>
+);
+
+const Divider = ({ className = "" }) => <hr className={`border-0 h-px bg-white/[0.06] ${className}`} />;
+
+const Link = ({ href, className = "", onPress, children, ...rest }) => (
+  <a href={href} className={className} onClick={onPress} {...rest}>{children}</a>
+);
+
+const Input = ({ label, placeholder, type = "text", isRequired, value, onValueChange, classNames = {}, variant, labelPlacement, ...rest }) => (
+  <div className="flex flex-col gap-1.5">
+    {label && <label className={`text-sm ${classNames.label || "text-[#6b7a8d]"}`}>{label}{isRequired && <span className="text-red-400 ml-0.5">*</span>}</label>}
+    <input type={type} placeholder={placeholder} required={isRequired} value={value}
+      onChange={(e) => onValueChange?.(e.target.value)}
+      className={`w-full rounded-xl px-3 py-2.5 text-sm text-white bg-transparent outline-none border transition-colors ${classNames.inputWrapper || "bg-[#131a22] border-white/[0.08] hover:border-[#00c8ff]/40 focus:border-[#00c8ff]/50"}`}
+      {...rest} />
+  </div>
+);
+
+const Textarea = ({ label, placeholder, value, onValueChange, minRows = 3, classNames = {}, variant, labelPlacement, ...rest }) => (
+  <div className="flex flex-col gap-1.5">
+    {label && <label className={`text-sm ${classNames.label || "text-[#6b7a8d]"}`}>{label}</label>}
+    <textarea placeholder={placeholder} value={value} rows={minRows}
+      onChange={(e) => onValueChange?.(e.target.value)}
+      className={`w-full rounded-xl px-3 py-2.5 text-sm text-white bg-transparent outline-none border transition-colors resize-none ${classNames.inputWrapper || "bg-[#131a22] border-white/[0.08] hover:border-[#00c8ff]/40 focus:border-[#00c8ff]/50"}`}
+      {...rest} />
+  </div>
+);
+
+const SelectItem = ({ children }) => children;
+const Select = ({ label, placeholder, selectedKeys, onSelectionChange, classNames = {}, variant, labelPlacement, children }) => {
+  const options = Children.map(children, (child) => ({ key: child.key, label: child.props.children })) || [];
+  const value = selectedKeys instanceof Set ? [...selectedKeys][0] || "" : "";
+  return (
+    <div className="flex flex-col gap-1.5">
+      {label && <label className={`text-sm ${classNames.label || "text-[#6b7a8d]"}`}>{label}</label>}
+      <select value={value} onChange={(e) => onSelectionChange?.(new Set([e.target.value]))}
+        className={`w-full rounded-xl px-3 py-2.5 text-sm text-white outline-none border transition-colors appearance-none cursor-pointer ${classNames.trigger || "bg-[#131a22] border-white/[0.08] hover:border-[#00c8ff]/40 focus:border-[#00c8ff]/50"}`}>
+        {placeholder && <option value="" disabled>{placeholder}</option>}
+        {options.map((opt) => <option key={opt.key} value={opt.key}>{opt.label}</option>)}
+      </select>
+    </div>
+  );
+};
 
 // ─────────────────────────────────────────────
 // DATA
